@@ -5,7 +5,16 @@ from urllib import request as urllib2
 import json
 
 urlReferer = "https://sou.zhaopin.com/?p=%(page)s&jl=%(location)s&sf=0&st=0&kw=python&kt=3"
-url = "https://fe-api.zhaopin.com/c/i/sou?start=990&pageSize=90&cityId=%(location)s&salary=0,0&workExperience=-1&education=-1&companyType=-1&employmentType=-1&jobWelfareTag=-1&kw=python&kt=3"
+url = "https://fe-api.zhaopin.com/c/i/sou?start=%(st)s&pageSize=90&cityId=%(location)s&salary=0,0\
+&workExperience=-1&education=-1&companyType=-1&employmentType=-1&jobWelfareTag=-1&kw=python&kt=3"
+
+listJobInfo = []
+
+
+RET_ERROR = -1
+RET_OK = 0
+
+
 def GetPageInfo(url, urlReferer):
     
     content = ""
@@ -31,23 +40,55 @@ def GetPageInfo(url, urlReferer):
 def AnalysisPageInfo(content):
     
     js = json.loads(content)
-    if js != None:
-        print(js["data"]['results'][0])
-        
-    
+    if js != None and len(js["data"]['results'])!= 0:
+        #data is here
+        relults = js["data"]['results']
+        for result in relults:
+            jobInfo = GetJobInfo(result)
+            listJobInfo.append(jobInfo)
+        return RET_OK       
+    else:
+        return RET_ERROR
 
 
+def GetJobInfo(result):
+    jobName = result["jobName"]
+    jobType = result["jobType"]["items"][0]["name"]
+    jobUrl = result["positionURL"]
+    salary = result["salary"]
+    city = result["city"]["display"]
+    company = result["company"]["name"]
+    companyUrl = result["company"]["url"]
+    welfare = ",".join(str(s) for s in result["welfare"])
 
-    
+    dicRet = {
+        "jobName":jobName,
+        "jobType":jobType,
+        "jobUrl":jobUrl,
+        "salary":salary,
+        "city":city,
+        "company":company,
+        "companyUrl":companyUrl,
+        "welfare":welfare
+        }
+
+    return dicRet
 
 if "__main__" == __name__:
 
-    for i in range(1,2):
+    for i in range(1,3):
         urlChinaReferer = urlReferer %{"page":i, "location":489}
-        urlChina = url %{"location":489}
-        content = GetPageInfo(url, urlChinaReferer)
-        AnalysisPageInfo(content)
+        urlChina = url %{"st":(i-1)*90, "location":489}
 
+        content = GetPageInfo(urlChina, urlChinaReferer)
+        if(AnalysisPageInfo(content) == RET_ERROR):
+            break
 
+    with open(r"D:\Dev\Src\t.txt", "w") as w:
+        for jobInfo in listJobInfo:
+            for key,value in jobInfo.items():
+                w.write(key + ":" + value + "\n")
+                
+    print("OK")
 
     
