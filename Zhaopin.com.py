@@ -3,10 +3,15 @@
 from bs4 import BeautifulSoup
 from urllib import request as urllib2
 import json
+import os
+import sys
+import datetime
 
-urlReferer = "https://sou.zhaopin.com/?p=%(page)s&jl=%(location)s&sf=0&st=0&kw=python&kt=3"
+import PSqlite
+
+urlReferer = "https://sou.zhaopin.com/?p=%(page)s&jl=%(location)s&sf=0&st=0&kw=%(keyword)s&kt=3"
 url = "https://fe-api.zhaopin.com/c/i/sou?start=%(st)s&pageSize=90&cityId=%(location)s&salary=0,0\
-&workExperience=-1&education=-1&companyType=-1&employmentType=-1&jobWelfareTag=-1&kw=python&kt=3"
+&workExperience=-1&education=-1&companyType=-1&employmentType=-1&jobWelfareTag=-1&kw=%(keyword)s&kt=3"
 
 listJobInfo = []
 
@@ -35,8 +40,6 @@ def GetPageInfo(url, urlReferer):
 
     return content
 
-
-
 def AnalysisPageInfo(content):
     
     js = json.loads(content)
@@ -44,8 +47,11 @@ def AnalysisPageInfo(content):
         #data is here
         relults = js["data"]['results']
         for result in relults:
-            jobInfo = GetJobInfo(result)
-            listJobInfo.append(jobInfo)
+            try:
+                jobInfo = GetJobInfo(result)
+                listJobInfo.append(jobInfo)
+            except:
+                pass
         return RET_OK       
     else:
         return RET_ERROR
@@ -75,17 +81,30 @@ def GetJobInfo(result):
     return dicRet
 
 if "__main__" == __name__:
-
-    for i in range(1,3):
-        urlChinaReferer = urlReferer %{"page":i, "location":489}
-        urlChina = url %{"st":(i-1)*90, "location":489}
+    if len(sys.argv) != 1:
+        strKW = sys.argv[1]
+    else:    
+        strKW = input("请输入关键字：");
+    t = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    dbPath = os.path.join(sys.path[0], t + strKW + ".db")
+    
+    #get data
+    for i in range(1,999):
+        urlChinaReferer = urlReferer %{"page":i, "location":489, "keyword":strKW}
+        urlChina = url %{"st":(i-1)*90, "location":489,"keyword":strKW}
 
         content = GetPageInfo(urlChina, urlChinaReferer)
         if(AnalysisPageInfo(content) == RET_ERROR):
             break
-
         
-                
+    #save data 2 db    
+    dbObj = PSqlite.PSqlite3(dbPath)
+    dbObj.CreateTable()
+    dbObj.InsertData(listJobInfo)
+    dbObj.Close()
+
+    #draw
+    
     print("OK")
 
     
