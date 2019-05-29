@@ -8,7 +8,7 @@ class PSqlite3:
         self.conn = sqlite3.connect(dbPath)
 
     def Close(self):
-        conn.close()
+        self.conn.close()
         
     def CreateTable(self):
         createTableSql = "create table JobInfo ("\
@@ -90,6 +90,7 @@ if __name__ == "__main__":
 
     ret = sqlObj.QueryData()
     assert ret[1][0] == "11"
+    sqlObj.Close()
 
     
 

@@ -3,6 +3,11 @@
 from bs4 import BeautifulSoup
 from urllib import request as urllib2
 import json
+import os
+import sys
+import datetime
+
+import PSqlite
 
 urlReferer = "https://sou.zhaopin.com/?p=%(page)s&jl=%(location)s&sf=0&st=0&kw=python&kt=3"
 url = "https://fe-api.zhaopin.com/c/i/sou?start=%(st)s&pageSize=90&cityId=%(location)s&salary=0,0\
@@ -76,16 +81,21 @@ def GetJobInfo(result):
 
 if "__main__" == __name__:
 
-    for i in range(1,3):
+    t = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    dbPath = os.path.join(sys.path[0], t+".db")
+    print(dbPath)
+    dbObj = PSqlite.PSqlite3(dbPath)
+    dbObj.CreateTable()
+    for i in range(1,99):
         urlChinaReferer = urlReferer %{"page":i, "location":489}
         urlChina = url %{"st":(i-1)*90, "location":489}
 
         content = GetPageInfo(urlChina, urlChinaReferer)
         if(AnalysisPageInfo(content) == RET_ERROR):
             break
-
+        dbObj.InsertData(listJobInfo)
         
-                
+    dbObj.Close()            
     print("OK")
 
     
