@@ -84,10 +84,7 @@ if "__main__" == __name__:
         if(AnalysisPageInfo(content) == RET_ERROR):
             break
 
-    with open(r"D:\Dev\Src\t.txt", "w") as w:
-        for jobInfo in listJobInfo:
-            for key,value in jobInfo.items():
-                w.write(key + ":" + value + "\n")
+        
                 
     print("OK")
 
