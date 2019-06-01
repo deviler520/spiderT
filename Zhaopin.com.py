@@ -1,11 +1,12 @@
 #coding:utf-8
 
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 from urllib import request as urllib2
 import json
 import os
 import sys
 import datetime
+from functools import wraps
 
 import PSqlite
 
@@ -18,8 +19,20 @@ listJobInfo = []
 
 RET_ERROR = -1
 RET_OK = 0
+DEBUG = 0
 
+def Log(func):
+    @wraps(func)
+    def warpper(*args, **kwargs):
+        
+        result = func(*args, **kwargs)
+        if DEBUG == 1:
+            time = datetime.datetime.now().strftime("[%Y%m%d%H%M%S]:")
+            print(time + func.__name__)
+        return result
+    return warpper
 
+@Log
 def GetPageInfo(url, urlReferer):
     
     content = ""
@@ -40,6 +53,7 @@ def GetPageInfo(url, urlReferer):
 
     return content
 
+@Log
 def AnalysisPageInfo(content):
     
     js = json.loads(content)
