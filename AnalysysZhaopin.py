@@ -36,7 +36,7 @@ def DrawBarPic(drawData):
     plt.xlabel("City")
     plt.ylabel("Count")
     plt.xticks(rotation=30)
-    plt.yticks(numpy.arange(0,300,20))
+    plt.yticks(numpy.arange(0,900,20))
     
     x = range(0, len(names))
     y = values
@@ -58,9 +58,9 @@ def GetCity(jobInfo):
 
 if "__main__" == __name__:
     if len(sys.argv) == 1:
-        dpPath = dbPath = os.path.join(sys.path[0], "Testpython.db")
-        AnlysysDB(dpPath)
+        dbPath = os.path.join(sys.path[0], "Testpython.db")
+        AnlysysDB(dbPath)
     else:    
         dpPath = sys.argv[1]
-        AnlysysDB(dpPath)
+        AnlysysDB(dbPath)
         

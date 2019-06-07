@@ -7,7 +7,7 @@ import os
 import sys
 import datetime
 from functools import wraps
-
+import AnalysysZhaopin
 import PSqlite
 
 urlReferer = "https://sou.zhaopin.com/?p=%(page)s&jl=%(location)s&sf=0&st=0&kw=%(keyword)s&kt=3"
@@ -117,7 +117,7 @@ if "__main__" == __name__:
     dbObj.Close()
 
     #draw
-    
+    AnalysysZhaopin.AnlysysDB(dbPath)
     print("OK")
 
     
