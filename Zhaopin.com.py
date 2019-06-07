@@ -24,7 +24,6 @@ DEBUG = 0
 def Log(func):
     @wraps(func)
     def warpper(*args, **kwargs):
-        
         result = func(*args, **kwargs)
         if DEBUG == 1:
             time = datetime.datetime.now().strftime("[%Y%m%d%H%M%S]:")
