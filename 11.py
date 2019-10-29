@@ -28,7 +28,7 @@ def main2():
 
     data = f.read()
     for k, v in f.getheaders():
-        print("%s : %s" % (k, v))
+        print("%s : %s " % (k, v))
 
 
 def main3():
