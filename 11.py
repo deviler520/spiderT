@@ -19,7 +19,7 @@ def main1():
 
 
 def main2():
-    url1 = r"https://api.douban.com/v2/book/2129650"
+    url1 = r"https://api.douban.com/v2/book/2129650TTT"
     f = request.urlopen(url1)
     print("Status", f.status, f.reason)
     ab = ""
