@@ -37,7 +37,7 @@ def GetPageInfo(url, urlReferer):
     content = ""
     headers = {
         'Accept': 'application/json, text/plain, */*',
-        'Accept-Encoding': 'gzip, deflate, br',
+        #'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
         'Connection': 'keep-alive',
         'Host': 'fe-api.zhaopin.com',
